@@ -11,12 +11,14 @@ html {
     font-size: 16px;
     font-weight: 400;
     width: 100%;
+    overflow-x: hidden;
 }
 
 body {
     line-height: 1.625;
     margin: 0;
     width: 100%;
+    overflow-x: hidden;
 }
 
 /* Header */
@@ -395,7 +397,8 @@ body {
         max-width: 500px;
         margin-left: auto;
         margin-right: auto;
-        margin-bottom: 30px;
+        padding-bottom: 30px;
+        transition: padding .3s;
     }
 
     .dishes_types div {
@@ -944,18 +947,8 @@ body {
         max-width: 923px;
     }
 
-    .animation_container:hover .recommended_dishes {
-        animation-play-state: paused;
-    }
-
-    .animation_container:hover ~ .pagination button {
-        animation-play-state: paused;
-    }
-
     .recommended_dish {
         display: flex;
-        margin-left: 10px;
-        margin-right: 10px;
         margin-bottom: 32px;
     }
 
@@ -989,25 +982,31 @@ body {
         max-width: 276px;
     }
 
-    .animation_container {
+    .carousel {
         position: relative;
         margin-bottom: 48px;
+        max-width: 433px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .pagination {
-        width: 80%;
+        width: 50%;
+        max-width: 320px;
         margin: auto;
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
+        transition: width 1s;
     }
 
     .pagination button {
-        width: calc(100vh/3 - calc(100vh/3.3));
-        height: calc(100vh/3 - calc(100vh/3.3));
+        width: 7px;
+        height: 7px;
+        padding: 0;
         border: 1px solid #C89446;
         border-radius: 50%;
         background: none;
-        transition: background-color .3s;
+        transition: background-color .5s;
         cursor: pointer;
     }
 
@@ -1018,6 +1017,62 @@ body {
     .pagination button:hover {
         background-color: #C89446;
     }
+
+    /* Carrousel */
+
+    .carousel {
+        position: relative;
+        overflow-x: hidden;     
+    }
+      
+    .carousel__container {
+        transform: translate3d(0, 0, 0);
+        transition: transform 0.5s;
+    }
+    
+    .carousel__container::after {
+        content: '';
+        clear: both;
+        display: table;
+    }
+    
+    .carousel__item {
+        float: left;
+        width: calc(100%/3);
+    }
+
+    .next_button, .prev_button {
+        position: absolute;
+        display: none;
+        opacity: 0;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        width: 50px;
+        background: no-repeat center url(img/chevron.svg),
+                    rgba(0, 0, 0, .5);
+        background-size: 30px;
+        z-index: 9;
+        transition: opacity .3s;
+    }
+
+    .prev_button {
+        right: auto;
+        left: 0;
+        transform: rotate(180deg);
+    }
+
+    .prev_button--active, .next_button--active {
+        display: block;
+    }
+
+    .prev_button--active:hover, .next_button--active:hover,
+    .prev_button--active:focus, .next_button--active:focus {
+        opacity: 1;
+    }
+
+
+
 
 @media only screen and (max-width:600px) {
     .top_title {
@@ -1231,6 +1286,7 @@ body {
     }
     .dishes_types {
         justify-content: space-between;
+        padding-bottom: 45px;
     }
     .dishes_part {
         display: flex;
@@ -1252,13 +1308,13 @@ body {
     .square_decoration {
         display: block;
         position: absolute;
-        width: 494.9px;
-        height: 494.9px;
+        width: 430px;
+        height: 430px;
         border: 1px solid #C89446;
         z-index: -1;
-        right: calc(50% - 247.45px);
-        left: calc(50% - 247.45px);
-        transform: translateY(-247.45px) rotate(45deg);
+        right: calc(50% - 215px);
+        left: calc(50% - 215px);
+        transform: translateY(-215px) rotate(45deg);
     }
     .chef_presentation {
         display: flex;
@@ -1339,6 +1395,9 @@ body {
     .ingredients .section_text {
         padding-bottom: 17px;
     }
+    .recommendation .section_text {
+        margin-bottom: 95px;
+    }
     .recommended_dishes {
         display: flex;
         flex-direction: column;
@@ -1356,23 +1415,17 @@ body {
     }
     .recommended_dish img {
         padding-right: 24px;
-        padding-top: 5px;
-        padding-left: 10px;
     }
     .recommended_dish:nth-child(2) .article {
         max-width: 291px;
     }
-    .animation_container {
+    .carousel {
         margin-bottom: 84px;
+        margin-left: 10px;
+        max-width: 950px;
     }
     .pagination {
-        max-width: 77px;
-        justify-content: space-between;
-    }
-    .pagination button {
-        width: 7px;
-        height: 7px;
-        padding: 0;
+        width: 77px;
     }
 }
 
