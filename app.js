@@ -94,8 +94,9 @@
             let point = e.touches ? e.touches[0] : e
             let translate = {x: point.screenX - this.origin.x, y: point.screenY - this.origin.y}
             if (e.touches && Math.abs(translate.x) > Math.abs(translate.y)) {
-                e.preventDefault()
-                e.stopPropagation()
+                $('html').css('overflow-y', 'hidden')
+            } else {
+                $('html').css('overflow-y', '')
             }
             let baseTranslate = this.index * -100 / this.items.length
             this.lastTranslate = translate
