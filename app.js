@@ -1,17 +1,20 @@
 (function () {
-    let element = document.querySelector('.header_nav_background')
-    element.style.opacity = '0'
+
+
+    let navBackground = document.querySelector('.header_nav_background')
+    navBackground.style.opacity = '0'
     function onScroll () {
         let top = document.body.getBoundingClientRect().top
         if (top > -50) {
-            element.style.opacity = '0'
+            navBackground.style.opacity = '0'
         } else {
-            element.style.opacity = '1'
+            navBackground.style.opacity = '1'
         }    
     }
     window.addEventListener('scroll', onScroll)
-    
-    
+
+
+
     function $createDivWithClass (className) {
         let $div = $('<div class="' + className +'"></div>')
         return $div
@@ -34,7 +37,7 @@
     
     function gotoItem (index) {
         let translateX = index * -100 / this.items.length
-        $container.css('transform', 'translate3d(' + translateX + '%, 0, 0)')
+        translate(translateX)
         if (index >= this.items.length - 1) {
             this.$nextButton.removeClass('next_button--active')
             this.$prevButton.addClass('prev_button--active')
@@ -54,18 +57,81 @@
             }
         }
     }
+
+    function disableTransition () {
+        this.$container.css('transition', 'none')
+    }
+
+    function enableTransition () {
+        this.$container.css('transition', '')
+    }
     
-    let $element = $('.carousel')
-    let $children = $($element.children())
-    let $container = $createDivWithClass('carousel__container').css('width', 100 * $children.length + "%")
-    $element.prepend($container)
+    function translate(percent) {
+        this.$container.css('transform', 'translate3d(' + percent + '%, 0, 0)')
+    }
+
+    function startDrag (e) {
+        if (e.touches) {
+            if (e.touches.length > 1) {
+                return
+            } else {
+                e = e.touches[0]
+            }
+        }
+        this.origin = {x: e.screenX, y: e.screenY}
+        this.width = this.$container[0].offsetWidth
+        disableTransition()
+    }
+
+    function drag (e) {
+        if (this.origin) {
+            function translateX(percent) {
+                this.$container.css('transform', 'translate3d(' + percent + '%, 0, 0)')
+            }
+            let point = e.touches ? e.touches[0] : e
+            let translate = {x: point.screenX - this.origin.x, y: point.screenY - this.origin.y}
+            if (e.touches && Math.abs(translate.x) > Math.abs(translate.y)) {
+                e.preventDefault()
+                e.stopPropagation()
+            }
+            let baseTranslate = this.index * -100 / this.items.length
+            this.lastTranslate = translate
+            translateX(baseTranslate + 100 * translate.x / this.width)
+        }
+    }
+
+    function endDrag (e) {
+        if (this.origin && this.lastTranslate) {
+            enableTransition()
+            if (Math.abs(this.lastTranslate.x / this.$element[0].offsetWidth) > 0.2) {
+                if (this.lastTranslate.x < 0 && this.index < this.items.length - 1) {
+                    index++
+                    gotoItem(index)
+                } else if (this.lastTranslate.x > 0 && this.index > 0) {
+                    index--
+                    gotoItem(index)
+                } else {
+                    gotoItem(this.index)
+                }
+            } else {
+                gotoItem(this.index)
+            }
+        }
+        this.origin = null
+    }
+
+    
+    this.$element = $('.carousel')
+    let $children = $(this.$element.children())
+    this.$container = $createDivWithClass('carousel__container').css('width', 100 * $children.length + "%")
+    this.$element.prepend(this.$container)
     this.index = 0
     this.items = []
     for (let i = 0; i < $children.length; i++) {
         let item = $createDivWithClass('carousel__item')
         let child = $children[i]
         item.append(child)
-        $container.append(item)
+        this.$container.append(item)
         items[i] = item
     }
     
@@ -78,7 +144,7 @@
         index = indexRedirect
     })
     
-    createNavigation($element)
+    createNavigation(this.$element)
     gotoItem(index)
 
     setInterval(function () {
@@ -90,5 +156,16 @@
                 gotoItem(index)
             }
     }, 20000)
-    
+
+
+    console.log(this.$container)
+    this.$container[0].addEventListener('dragstart', e => e.preventDefault())
+    //this.$container[0].addEventListener('mousedown', startDrag.bind(this))
+    this.$container[0].addEventListener('touchstart', startDrag.bind(this))
+    //window.addEventListener('mousemove', drag.bind(this))
+    window.addEventListener('touchmove', drag.bind(this))
+    //window.addEventListener('mouseup', endDrag.bind(this))
+    window.addEventListener('touchend', endDrag.bind(this))
+    window.addEventListener('touchcancel', endDrag.bind(this))
+
 })()
