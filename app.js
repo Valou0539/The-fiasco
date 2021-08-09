@@ -26,6 +26,7 @@
         element.append(this.$nextButton)
         element.append(this.$prevButton)
         this.$nextButton.on('click', function () {
+            index
             index++
             gotoItem(index)
         })
@@ -38,15 +39,17 @@
     function gotoItem (index) {
         let translateX = index * -100 / this.items.length
         translate(translateX)
-        if (index >= this.items.length - 1) {
+        if (index >= this.items.length - 1 && this.enableNav) {
             this.$nextButton.removeClass('next_button--active')
             this.$prevButton.addClass('prev_button--active')
-        } else if (index <= 0) {
+        } else if (index <= 0 && this.enableNav) {
             this.$nextButton.addClass('next_button--active')
             this.$prevButton.removeClass('prev_button--active')
         } else {
-            this.$nextButton.addClass('next_button--active')
-            this.$prevButton.addClass('prev_button--active')
+            if (this.enableNav) {
+                this.$nextButton.addClass('next_button--active')
+                this.$prevButton.addClass('prev_button--active')
+            }
         }
         for (k = 0; k < this.paginationButtons.length; k++) {
             let paginationButton = this.paginationButtons[k]
@@ -55,6 +58,26 @@
             } else {
                 paginationButton.classList.remove('active_button')
             }
+        }
+    }
+
+    function disableNav () {
+        if (this.enableNav === false) {
+            if (this.$nextButton.hasClass('next_button--active')) {
+                this.$nextButton.removeClass('next_button--active')
+            }
+            if (this.$prevButton.hasClass('prev_button--active')) {
+                this.$prevButton.removeClass('prev_button--active')
+            }
+        }
+        if (this.enableNav) {
+            this.enableNav = false
+        }
+    }
+
+    function enableNav () {
+        if (this.enableNav === false) {
+            this.enableNav = true
         }
     }
 
@@ -144,6 +167,7 @@
         index = indexRedirect
     })
     
+    this.enableNav = true
     createNavigation(this.$element)
     gotoItem(index)
 
@@ -157,14 +181,11 @@
             }
     }, 20000)
 
-
-    console.log(this.$container)
     this.$container[0].addEventListener('dragstart', e => e.preventDefault())
-    //this.$container[0].addEventListener('mousedown', startDrag.bind(this))
+    window.addEventListener('mousedown', enableNav)
+    window.addEventListener('touchstart', disableNav)
     this.$container[0].addEventListener('touchstart', startDrag.bind(this))
-    //window.addEventListener('mousemove', drag.bind(this))
     window.addEventListener('touchmove', drag.bind(this))
-    //window.addEventListener('mouseup', endDrag.bind(this))
     window.addEventListener('touchend', endDrag.bind(this))
     window.addEventListener('touchcancel', endDrag.bind(this))
 
