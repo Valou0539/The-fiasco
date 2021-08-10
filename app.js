@@ -122,6 +122,7 @@
             }
         }
         this.origin = null
+        $('html').css('overflow-y', '')
     }
 
     
