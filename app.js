@@ -1,6 +1,7 @@
 (function () {
 
 
+    //Changement de couleur du header_nav
     let navBackground = document.querySelector('.header_nav_background')
     navBackground.style.opacity = '0'
     function onScroll () {
@@ -14,7 +15,7 @@
     window.addEventListener('scroll', onScroll)
 
 
-
+    //Carousel du salt_chicken.html
     function $createDivWithClass (className) {
         let $div = $('<div class="' + className +'"></div>')
         return $div
@@ -174,5 +175,33 @@
     window.addEventListener('touchmove', drag.bind(this))
     window.addEventListener('touchend', endDrag.bind(this))
     window.addEventListener('touchcancel', endDrag.bind(this))
+
+
+    //apparition des objets avec la classe reveal lors du srcoll
+    const ratio = .1
+    const options = {
+        root: null,
+        rootMargin: '0px',
+        threshold: ratio
+    }
+
+    const handelIntersect = function (entries, observer) {
+        entries.forEach(function (entry) {
+            if (entry.intersectionRatio > ratio) {
+                entry.target.style.transition = "1s"
+                entry.target.classList.remove('reveal')
+                setTimeout(function () {
+                    entry.target.style.transition = ""
+                }, 1000)
+                observer.unobserve(entry.target)
+            }
+        })
+    }
+
+    document.documentElement.classList.add('reveal-loaded')
+    const observer = new IntersectionObserver(handelIntersect, options)
+    document.querySelectorAll('.reveal').forEach(function (r) {
+        observer.observe(r)
+    })
 
 })()
