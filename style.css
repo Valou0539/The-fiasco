@@ -21,6 +21,11 @@ body {
     overflow-x: hidden;
 }
 
+.reveal-loaded .reveal {
+    opacity: 0 !important;
+    transform: translateY(30px) !important;
+}
+
 /* Header */
 
     .header {
@@ -1550,6 +1555,13 @@ body {
     .news {
         margin-right: auto;
         margin-left: auto;
+    }
+}
+
+@media (prefers-reduced-motions: reduce) {
+    .reveal {
+        opacity: 1 !important;
+        transform: translateY(0) !important;
     }
 }
 
